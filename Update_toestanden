@@ -1,0 +1,33 @@
+def update_toestand(toestanden, V, p_inf=1, p_res=0):
+    "Functie die toestand aanpast naar nieuwe toestand per tijdstap."
+    n = len(toestanden)        # aantal toestanden is populatiegrootte
+    nieuwe_toestanden = []     # maak lijst om de nieuwe toestanden in op te slaan
+    
+    for i, toestand in enumerate(toestanden):         # ga lijst toestanden af en houd overeenkomstige index bij
+        if toestand == "S":                           # persoon i is vatbaar
+            # tel aantal geïnfecteerden die persoon i kent
+            n_inf_kennissen = 0
+            for j in range(n):
+                if V[i,j] == 1 and toestanden[j] == "I":     # als persoon i in contact met geïnfecteerde persoon
+                    n_inf_kennissen += 1
+            # kans dat persoon i ziek wordt door een zieke kennis
+            p_ziekte = 1 - (1 - p_inf)**n_inf_kennissen
+            # effectief besmet of niet
+            if (p_ziekte > np.random.rand()):
+                toestand = "I" 
+            else:
+                toestand = "S"
+            nieuwe_toestanden.append(toestand)
+        elif toestand == "I":                          # persoon i is vatbaar
+            # persoon die geïnfecteerd is, kan resistent worden
+            # effectief besmet of niet
+            if (p_res > np.random.rand()):
+                toestand = "R"  
+            else:
+                toestand = "I"
+            nieuwe_toestanden.append(toestand)
+        elif toestand == "R":                          # persoon i is resistent
+            # resistente personen blijven resistent
+            nieuwe_toestanden.append("R")
+    
+    return nieuwe_toestanden
